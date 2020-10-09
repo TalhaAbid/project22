@@ -130,7 +130,7 @@ void ArrayBag<ItemType>::operator/=(const ArrayBag<ItemType> &a_bag){
         // if the RHS bag is empty, clear LHS bag
         this->clear(); 
     } else {
-        auto temp = this->getVector();
+        auto temp = this->toVector();
         for (auto item: temp){
             if (!(a_bag.contains(item))){ // if LHS[i] is not in  RHS 
                 this->remove(item); // remove it from LHS
