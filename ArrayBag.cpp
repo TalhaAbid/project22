@@ -1,5 +1,5 @@
 #include "ArrayBag.hpp"
-
+#include <iostream>
 template<typename ItemType>
 ArrayBag<ItemType>::ArrayBag(): item_count_(0){
     //default constructor
@@ -18,7 +18,7 @@ bool ArrayBag<ItemType>::isEmpty() const{
 
 template<typename ItemType>
 bool ArrayBag<ItemType>::add(const ItemType& new_entry){
-    if (getCurrentSize() == DEFAULT_CAPACITY){
+    if (item_count_ == DEFAULT_CAPACITY){
         return false;
     } else {
         items_[getCurrentSize() - 1] = new_entry;
@@ -29,13 +29,10 @@ bool ArrayBag<ItemType>::add(const ItemType& new_entry){
 
 template<typename ItemType>
 bool ArrayBag<ItemType>::remove(const ItemType &an_entry){
-    int index = getIndexOf(an_entry); // get the index of the item
-    if (getIndexOf(an_entry) == -1){  // if index == -1 
-        return false; // return false since item not in array
-    } else { // item is in array
-        items_[index] = items_[getCurrentSize() - 1]; 
-        // replace the item to be removed with the item at the end
-        item_count_--; // reduce the current size by 1
+    int index = getIndexOf(an_entry);
+    if (!isEmpty() && index >= 0){
+        item_count_--;
+        items_[index]  == items_[item_count_];
         return true;
     }
     return false;
@@ -49,7 +46,7 @@ void ArrayBag<ItemType>::clear(){
 
 template<typename ItemType>
 bool ArrayBag<ItemType>::contains(const ItemType &an_entry) const{
-    return (getIndexOf(an_entry) != -1);
+    return (!(getIndexOf(an_entry) == -1));
     // if the index is not -1 then the item will be in the array
 }
 
@@ -65,17 +62,15 @@ int ArrayBag<ItemType>::getFrequencyOf(const ItemType &an_entry) const{
 
 template<typename ItemType>
 int ArrayBag<ItemType>::getIndexOf(const ItemType &target) const{
-    if (getFrequencyOf(target) == 0){
-        // check the frequency, if 0 return -1
-        return -1;
-    } else {
-        for (int i =0; i < getCurrentSize(); i++){ // loop over curr array
-            if (items_[i] == target){ // check if the curr item == target
-                return i; // return index of the first occurance
+        int index = -1;
+        for (int i =0; i < item_count_; i++){ // loop over curr array
+                std::cout << items_[i] << std::endl;
+                if (items_[i] == target){ // check if the curr item == target
+                index = i; // return index of the first occurance
+                return i;
             }
         }
-    }
-    return -1;
+    return index;
 }
 template<typename ItemType>
 vector<ItemType> ArrayBag<ItemType>::toVector() const{
@@ -91,7 +86,7 @@ void ArrayBag<ItemType>::operator+=(const ArrayBag<ItemType> &a_bag){
     if (this->getCurrentSize() == DEFAULT_CAPACITY){
         // if the LHS bag is already full don't do anything
         return;
-    } else if (a_bag.getCurrentSize() == 0){
+    } else if (a_bag.isEmpty()){
         // if the RHS bag is empty don't do anything
         return;
     } else {
@@ -110,7 +105,7 @@ template<typename ItemType>
 void ArrayBag<ItemType>::operator-=(const ArrayBag<ItemType> &a_bag){
     if (this->getCurrentSize() == 0){
         return; // if LHS bag is empty do nothing
-    } else if (a_bag.getCurrentSize() == 0){
+    } else if (a_bag.isEmpty()){
         // if the RHS bag is empty don't do anything
         return;
     } else {
@@ -126,7 +121,7 @@ template<typename ItemType>
 void ArrayBag<ItemType>::operator/=(const ArrayBag<ItemType> &a_bag){
     if (this->getCurrentSize() == 0){
         return; // if LHS bag is empty do nothing
-    } else if (a_bag.getCurrentSize() == 0){
+    } else if (a_bag.isEmpty()){
         // if the RHS bag is empty, clear LHS bag
         this->clear(); 
     } else {
@@ -143,15 +138,17 @@ bool ArrayBag<ItemType>::operator==(const ArrayBag<ItemType> &a_bag){
     if (this->getCurrentSize() != a_bag.getCurrentSize()){
         return false;
     } else {
-        // get the set difference 
-        this->operator-=(a_bag);
-        // if two bags are the same then set difference will make the LHS empty
-        return item_count_ == 0;
+        for (int i = 0; i < item_count_; i++){
+            if (a_bag.contains(items_[i]) == false) {
+                return false;
+            }
+        }
     }
     return false;
+    
 }
 
 template<typename ItemType>
 bool ArrayBag<ItemType>::operator!=(const ArrayBag<ItemType> &a_bag){
-    return false;
+    return !(this->operator==(a_bag));
 }
