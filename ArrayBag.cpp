@@ -21,8 +21,8 @@ bool ArrayBag<ItemType>::add(const ItemType& new_entry){
     if (item_count_ == DEFAULT_CAPACITY){
         return false;
     } else {
-        items_[getCurrentSize() - 1] = new_entry;
         item_count_++;
+        items_[item_count_ - 1] = new_entry;
         return true;
     }
 }
@@ -30,12 +30,14 @@ bool ArrayBag<ItemType>::add(const ItemType& new_entry){
 template<typename ItemType>
 bool ArrayBag<ItemType>::remove(const ItemType &an_entry){
     int index = getIndexOf(an_entry);
-    if (!isEmpty() && index >= 0){
+    if (index == -1){
+        return false;
+    } else {
         item_count_--;
-        items_[index]  == items_[item_count_];
+        items_[index] = items_[item_count_];
         return true;
     }
-    return false;
+    return true;
 }
 
 
